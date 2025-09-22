@@ -3,8 +3,10 @@ package it.uniroma3.siw.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.uniroma3.siw.model.Comment;
 import it.uniroma3.siw.model.User;
 import it.uniroma3.siw.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserService {
@@ -18,9 +20,27 @@ public class UserService {
 	
 	
 	
+	
 	public void saveUser(User user) {
 		
 		userRepo.save(user);
+	}
+	
+	
+	@Transactional
+	public void addCommentToUser(Comment comment, User user) {
+		
+		
+		user.getComments().add(comment);
+		this.saveUser(user);
+	}
+	
+	
+	@Transactional
+	public void removeCommentToUser(Comment comment, User user) {
+		
+		user.getComments().remove(comment);
+		this.saveUser(user);
 	}
 	
 	

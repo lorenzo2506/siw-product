@@ -6,7 +6,9 @@ import lombok.Data;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Data
 @Entity
@@ -36,10 +38,11 @@ public class Product {
         joinColumns = @JoinColumn(name = "product_id"),
         inverseJoinColumns = @JoinColumn(name = "similar_product_id")
     )
-    private Set<Product> similarProducts = new HashSet<>();
+    private List<Product> similarProducts = new ArrayList<>();
+    
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments = new HashSet<>();
+    private List<Comment> comments = new ArrayList<>();
     
     
     

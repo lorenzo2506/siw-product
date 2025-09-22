@@ -6,6 +6,9 @@ import it.uniroma3.siw.model.User;
 import it.uniroma3.siw.service.ProductService;
 import it.uniroma3.siw.service.CommentService;
 import jakarta.validation.Valid;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,8 +58,8 @@ public class ProductController {
     }
     
     // Salva nuovo prodotto (ADMIN)
-    @PostMapping("/admin/product")
-    public String saveProduct(@Valid @ModelAttribute("product") Product product, 
+    @PostMapping("/admin/product/new")
+    public String addProduct(@Valid @ModelAttribute("product") Product product, 
                              BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "admin/formNewProduct";
@@ -65,25 +68,6 @@ public class ProductController {
         return "redirect:/products";
     }
     
-    // Form per modificare prodotto (ADMIN)
-    @GetMapping("/admin/product/edit/{id}")
-    public String showEditProductForm(@PathVariable Long id, Model model) {
-        model.addAttribute("product", productService.findById(id));
-        return "admin/formEditProduct";
-    }
-    
-    // Aggiorna prodotto (ADMIN)
-    @PostMapping("/admin/product/edit/{id}")
-    public String updateProduct(@PathVariable Long id, 
-                               @Valid @ModelAttribute("product") Product product,
-                               BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "admin/formEditProduct";
-        }
-        product.setId(id);
-        productService.save(product);
-        return "redirect:/product/" + id;
-    }
     
     // Elimina prodotto (ADMIN)
     @GetMapping("/admin/product/delete/{id}")
@@ -97,59 +81,84 @@ public class ProductController {
     public String showAddSimilarForm(@PathVariable Long id, Model model) {
         Product product = productService.findById(id);
         model.addAttribute("product", product);
-        model.addAttribute("availableProducts", productService.findProductsNotInSimilar(id));
+        // NON serve più passare availableProducts!
         return "admin/addSimilarProduct";
     }
     
-    @PostMapping("/admin/product/{productId}/addSimilar/{similarId}")
+    @PostMapping("/admin/product/{productId}/addSimilar")
     public String addSimilarProduct(@PathVariable Long productId, 
-                                   @PathVariable Long similarId) {
-    	
-        productService.addSimilarProduct(productId, similarId);
+                                   @RequestParam String name,
+                                   @RequestParam String category,
+                                   Model model) {
+        
+        Product product = productService.findById(productId);        
+        Product similarProduct = productService.findByNameAndCategory(name, category);
+        
+        if (similarProduct == null) {
+            model.addAttribute("error", "Prodotto non trovato con nome e categoria specificati");
+            model.addAttribute("product", product);
+            return "admin/addSimilarProduct";
+        }
+        
+        if (similarProduct.getId().equals(productId)) {
+            model.addAttribute("error", "Non puoi aggiungere il prodotto a se stesso");
+            model.addAttribute("product", product);
+            return "admin/addSimilarProduct";
+        }
+        
+        if (product.getSimilarProducts().contains(similarProduct)) {
+            model.addAttribute("error", "Questo prodotto è già nella lista dei simili");
+            model.addAttribute("product", product);
+            return "admin/addSimilarProduct";
+        }
+        
+        productService.addSimilarProduct(productId, similarProduct.getId());
+        
         return "redirect:/product/" + productId;
     }
     
-    @GetMapping("/admin/product/{productId}/removeSimilar/{similarId}")
+    
+    @PostMapping("/admin/product/{productId}/removeSimilar/{similarId}")
     public String removeSimilarProduct(@PathVariable Long productId, 
-                                      @PathVariable Long similarId) {
+                                      @PathVariable Long similarId,
+                                      Model model) {
+        
+        Product product = productService.findById(productId);
+        Product similarProduct = productService.findById(similarId);
+        
+        // 1. Controlla se i prodotti esistono
+        if (product == null || similarProduct == null) {
+            return "redirect:/products";
+        }
+        
+        // 2. Controlla se similarProduct è effettivamente nella lista
+        if (!product.getSimilarProducts().contains(similarProduct)) {
+            return "redirect:/product/" + productId;
+        }
+        
+        // 3. Rimuovi (bidirezionale già gestito nel service)
         productService.removeSimilarProduct(productId, similarId);
-        return "redirect:/product/" + productId;
-    }
-    
-    // Aggiungi commento (USER)
-    @PostMapping("/product/{id}/comment")
-    public String addComment(@PathVariable Long id, 
-                            @Valid @ModelAttribute("comment") Comment comment,
-                            BindingResult bindingResult,
-                            Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("product", productService.findById(id));
-            return "product";
-        }
-        
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        
-        comment.setProduct(productService.findById(id));
-        comment.setUser(currentUser);
-        commentService.save(comment);
-        
-        return "redirect:/product/" + id;
-    }
-    
-    // Elimina commento (solo il proprio)
-    @GetMapping("/comment/delete/{id}")
-    public String deleteComment(@PathVariable Long id) {
-        Comment comment = commentService.findById(id);
-        Long productId = comment.getProduct().getId();
-        
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        
-        if (comment.getUser().getId().equals(currentUser.getId())) {
-            commentService.deleteById(id);
-        }
         
         return "redirect:/product/" + productId;
     }
+    
+    
+    @GetMapping("/admin/product/{productId}/edit")
+    public String showEditForm(@PathVariable("productId") Long productId, Model model) {
+    	
+    	Product product = this.productService.findById(productId);
+    	model.addAttribute("product", product);
+    	return "admin/productEditForm";
+    }
+    
+    
+    @PostMapping("/admin/product/{productId}/edit")
+    public String edit(@ModelAttribute("formProduct") Product formProduct, @PathVariable("productId") Long productId) {
+    	
+    	Product product = this.productService.findById(productId);
+    	this.productService.edit(product, formProduct);
+    	return "redirect:/product"+productId;
+    }
+    
+ 
 }

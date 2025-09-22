@@ -1,5 +1,6 @@
 package it.uniroma3.siw.service;
 
+import it.uniroma3.siw.model.Comment;
 import it.uniroma3.siw.model.Product;
 import it.uniroma3.siw.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,15 @@ public class ProductService {
     }
     
     public List<Product> findByCategory(String category) {
-        return productRepository.findByCategory(category);
+        return productRepository.findByCategory(category.toLowerCase().trim());
+    }
+    
+    public List<Product> findAllSimilarProducts(Long id) {
+    	return productRepository.findAllSimilarProductsByProductId(id);
+    }
+    
+    public boolean existsByNameAndCategory(String name, String category) {
+    	return productRepository.existsByNameAndCategory(name.toLowerCase().trim(), category.toLowerCase().trim());
     }
     
     public List<Product> findByNameContaining(String name) {
@@ -33,6 +42,10 @@ public class ProductService {
     
     @Transactional
     public Product save(Product product) {
+        // Normalizza la categoria in minuscolo
+        if (product.getCategory() != null) {
+            product.setCategory(product.getCategory().toLowerCase().trim());
+        }
         return productRepository.save(product);
     }
     
@@ -48,7 +61,10 @@ public class ProductService {
         
         if (product != null && similarProduct != null) {
             product.getSimilarProducts().add(similarProduct);
+            similarProduct.getSimilarProducts().add(product);
             productRepository.save(product);
+            productRepository.save(similarProduct);
+
         }
     }
     
@@ -59,7 +75,9 @@ public class ProductService {
         
         if (product != null && similarProduct != null) {
             product.getSimilarProducts().remove(similarProduct);
+            similarProduct.getSimilarProducts().remove(product);
             productRepository.save(product);
+            productRepository.save(similarProduct);
         }
     }
     
@@ -78,5 +96,40 @@ public class ProductService {
     
     public List<String> findAllCategories() {
         return productRepository.findDistinctCategories();
+    }
+    
+    
+    
+    public void edit(Product product, Product formProduct) {
+    	
+    	if(product==null || formProduct==null)
+    		throw new IllegalArgumentException("errore");
+    	
+    	product.setName( formProduct.getName() );
+    	product.setPrice( formProduct.getPrice() );
+    	product.setDescription( formProduct.getDescription());
+    	product.setCategory( formProduct.getCategory() );
+    	this.save(product);
+    	
+    }
+    
+    
+    public Product findByNameAndCategory(String name, String category) {
+    	return this.productRepository.findByNameAndCategory(name.toLowerCase().trim(), category.toLowerCase().trim());
+    }
+    
+    
+    @Transactional
+    public void addCommentToProduct(Comment comment, Product product) {
+    	
+    	product.getComments().add(comment);
+    	this.save(product);
+    }
+    
+    @Transactional
+    public void deleteCommentToProduct(Comment comment, Product product) {
+    	
+    	product.getComments().remove(comment);
+    	this.save(product);
     }
 }
