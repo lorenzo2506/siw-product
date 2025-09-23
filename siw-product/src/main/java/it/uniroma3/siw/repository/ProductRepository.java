@@ -9,19 +9,25 @@ import java.util.List;
 
 public interface ProductRepository extends CrudRepository<Product, Long> {
     
-    List<Product> findByCategory(String category);
+    public List<Product> findByCategory(String category);
     
-    List<Product> findByNameContainingIgnoreCase(String name);
+    public List<Product> findByNameContainingIgnoreCase(String name);
     
     
     
     @Query("SELECT DISTINCT p.category FROM Product p")
-    List<String> findDistinctCategories();
+    public List<String> findDistinctCategories();
     
     @Query("SELECT sp FROM Product p JOIN p.similarProducts sp WHERE p.id = :productId")
-    List<Product> findAllSimilarProductsByProductId(@Param("productId") Long productId);
+    public List<Product> findAllSimilarProductsByProductId(@Param("productId") Long productId);
     
     public boolean existsByNameAndCategory(String name, String category);
     
     public Product findByNameAndCategory(String name, String category);
+    
+    @Query("SELECT p FROM Product p WHERE "
+    		+ "(LOWER(p.name) LIKE LOWER(CONCAT(:query, '%'))) "
+    		+ "AND (:maxPrice IS NULL OR p.price < :maxPrice)"
+    		+ " AND (:minPrice IS NULL OR p.price > :minPrice)")
+    public List<Product> findBySearchQuery(@Param("query") String query, @Param("maxPrice") Double maxPrice, @Param("minPrice") Double minPrice);
 }

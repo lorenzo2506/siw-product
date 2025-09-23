@@ -1,0 +1,381 @@
+/* Comments Page Styles */
+
+.comments-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.comments-container {
+    margin-top: 1.5rem;
+}
+
+.comments-header-page {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 1rem;
+}
+
+.comments-header-page h1 {
+    font-size: 2rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.comments-header-page h1 span {
+    color: #3b82f6;
+}
+
+.comments-count {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* Add Comment Section */
+.add-comment-section {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.add-comment-section h2 {
+    font-size: 1.25rem;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+}
+
+.comment-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-submit-comment {
+    align-self: flex-start;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit-comment:hover {
+    background: #2563eb;
+}
+
+/* Login Prompt */
+.login-prompt {
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.login-prompt a {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}
+
+/* Comment Sections */
+.user-comment-section,
+.other-comments-section {
+    margin-bottom: 2rem;
+}
+
+.user-comment-section h2,
+.other-comments-section h2 {
+    font-size: 1.5rem;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+/* Comment Card */
+.comment-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+}
+
+.comment-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.user-comment {
+    border: 2px solid #3b82f6;
+    background: #eff6ff;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author-name {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 1rem;
+}
+
+.comment-badge {
+    background: #3b82f6;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-edit-comment,
+.btn-delete-comment {
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.btn-edit-comment {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-edit-comment:hover {
+    background: #2563eb;
+}
+
+.btn-delete-comment {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-delete-comment:hover {
+    background: #dc2626;
+}
+
+.admin-delete {
+    background: #f59e0b;
+}
+
+.admin-delete:hover {
+    background: #d97706;
+}
+
+.comment-body {
+    margin: 1rem 0;
+}
+
+.comment-body p {
+    color: #374151;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.comment-footer {
+    display: flex;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.comment-date {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+/* No Comments */
+.no-comments {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+}
+
+/* Back Button */
+.back-to-product {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e5e7eb;
+}
+
+.btn-back {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #6b7280;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.btn-back:hover {
+    background: #4b5563;
+}
+
+/* Comments List */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Edit Comment Page */
+.edit-comment-page {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.edit-comment-container {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.edit-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.edit-header h1 {
+    font-size: 1.75rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.edit-header p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+.edit-header strong {
+    color: #3b82f6;
+}
+
+.edit-comment-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-submit {
+    padding: 0.75rem 1.5rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover {
+    background: #2563eb;
+}
+
+.btn-cancel {
+    padding: 0.75rem 1.5rem;
+    background: #6b7280;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.2s;
+    display: inline-block;
+}
+
+.btn-cancel:hover {
+    background: #4b5563;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-submit,
+    .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .comments-page {
+        padding: 1rem 0.5rem;
+    }
+
+    .comments-header-page h1 {
+        font-size: 1.5rem;
+    }
+
+    .comment-card {
+        padding: 1rem;
+    }
+
+    .comment-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .btn-edit-comment,
+    .btn-delete-comment {
+        width: 100%;
+        text-align: center;
+    }
+}

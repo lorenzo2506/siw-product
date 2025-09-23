@@ -70,5 +70,10 @@ public class CommentService {
     }
     
     
+    public List<Comment> findAllByProductAnsUserNot(Product product, User user) {
+    	return this.commentRepository.findAllByProductAndUserNot(product, user);
+    }
+    
+    
     
 }

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title th:text="${product.name} + ' - SIW Product'">Prodotto - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="product-detail">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span>/</span>
+                <a th:href="@{/products}">Prodotti</a>
+                <span>/</span>
+                <span th:text="${product.name}">Prodotto</span>
+            </nav>
+            
+            <div class="product-container">
+                <!-- Immagine Prodotto -->
+                <div class="product-image-section">
+                    <div class="main-image">
+                        <img th:if="${product.imagePath != null}" 
+                             th:src="@{/uploads/{path}(path=${product.imagePath})}" 
+                             th:alt="${product.name}">
+                        <div th:unless="${product.imagePath != null}" class="image-placeholder">
+                            📦
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Info Prodotto -->
+                <div class="product-info-section">
+                    <span class="product-badge" th:text="${product.category}">Categoria</span>
+                    <h1 class="product-name" th:text="${product.name}">Nome Prodotto</h1>
+                    <p class="product-price" th:text="'€' + ${#numbers.formatDecimal(product.price, 1, 2)}">€0.00</p>
+                    
+                    <div class="product-description">
+                        <h3>Descrizione</h3>
+                        <p th:text="${product.description}">Descrizione del prodotto</p>
+                    </div>
+                    
+                    <!-- Azioni Admin -->
+                    <div th:if="${isAdmin}" class="admin-actions-detail">
+                        <a th:href="@{/admin/product/{id}/edit(id=${product.id})}" class="btn-edit"> Modifica</a>
+                        <a th:href="@{/admin/product/delete/{id}(id=${product.id})}" 
+                           class="btn-delete"
+                           > Elimina</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Prodotti Simili -->
+            <div th:if="${product.similarProducts != null and !product.similarProducts.isEmpty()}" class="similar-section">
+                <h2 class="section-title">Prodotti Simili</h2>
+                <div class="similar-grid">
+                    <div th:each="similar : ${product.similarProducts}" class="similar-card">
+                        <a th:href="@{/product/{id}(id=${similar.id})}">
+                            <div class="similar-image">
+                                <img th:if="${similar.imagePath != null}" 
+                                     th:src="@{/uploads/{path}(path=${similar.imagePath})}" 
+                                     th:alt="${similar.name}">
+                                <div th:unless="${similar.imagePath != null}" class="similar-placeholder"><img th:src="@{/images/package.png}" 
+                             style="width: 20px !important; height: 20px !important;"></div>
+                            </div>
+                            <h4 th:text="${similar.name}">Prodotto Simile</h4>
+                            <p th:text="'€' + ${#numbers.formatDecimal(similar.price, 1, 2)}">€0.00</p>
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sezione Commenti -->
+            <div class="comments-section">
+                <div class="comments-header">
+                    <h2 class="section-title">Commenti</h2>
+                    <a th:href="@{/product/{id}/comments(id=${product.id})}" class="btn-view-comments">
+                        Vedi tutti i commenti (<span th:text="${product.comments.size()}">0</span>)
+                    </a>
+                </div>
+               
+                
+                <p th:if="${product.comments == null or product.comments.isEmpty()}" class="no-comments">
+                    Nessun commento ancora. Sii il primo a commentare questo prodotto!
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

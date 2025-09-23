@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Prodotti - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="products-page">
+            <div class="products-header">
+                <h1 class="page-title">Tutti i Prodotti</h1>
+                <div th:if="${isAdmin}" class="admin-actions">
+                    <a th:href="@{/admin/product/new}" class="btn-add">+ Aggiungi Prodotto</a>
+                </div>
+            </div>
+            
+            <!-- Filtro Categorie -->
+            <div class="categories-filter">
+                <a th:href="@{/products}" class="filter-btn active">Tutte</a>
+                <a th:each="cat : ${categories}" 
+                   th:href="@{/products/category/{category}(category=${cat})}" 
+                   class="filter-btn"
+                   th:text="${cat}">Categoria</a>
+            </div>
+            
+            <!-- Griglia Prodotti -->
+            <div th:if="${products != null and !products.isEmpty()}" class="products-grid">
+                <div th:each="product : ${products}" class="product-card">
+                    <a th:href="@{/product/{id}(id=${product.id})}" class="product-link">
+                        <!-- Immagine -->
+                        <div class="product-image">
+                            <img th:if="${product.imagePath != null}" 
+                                 th:src="@{/uploads/{path}(path=${product.imagePath})}" 
+                                 th:alt="${product.name}">
+                            <div th:unless="${product.imagePath != null}" class="product-placeholder">
+                                📦
+                            </div>
+                        </div>
+                        
+                        <!-- Info -->
+                        <div class="product-content">
+                            <span class="product-category" th:text="${product.category}">Categoria</span>
+                            <h3 class="product-title" th:text="${product.name}">Nome Prodotto</h3>
+                            <p class="product-description" th:text="${product.description}">Descrizione breve del prodotto</p>
+                            <div class="product-footer">
+                                <span class="product-price" th:text="'€' + ${#numbers.formatDecimal(product.price, 1, 2)}">€0.00</span>
+                                <span class="view-details">Dettagli →</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div th:if="${products == null or products.isEmpty()}" class="empty-products">
+                <span class="empty-icon"><img th:src="@{/images/package.png}" 
+                             style="width: 20px !important; height: 20px !important;"></span>
+                <h2>Nessun prodotto disponibile</h2>
+                <p>Non ci sono ancora prodotti in questa categoria.</p>
+                <a th:href="@{/}" class="btn-back">Torna alla Home</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

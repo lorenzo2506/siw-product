@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" th:fragment="base(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SIW Product - Il tuo negozio online di fiducia">
+    <meta name="keywords" content="e-commerce, prodotti, shopping online, qualità, convenienza">
+    <meta name="author" content="SIW Product">
+    
+    <title th:replace="${title}">SIW Product</title>
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    
+    <!-- Preload fonts per performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+    
+    <!-- Header -->
+    <header th:replace="fragments/header.html :: navbar"></header>
+    
+    <!-- Main Content -->
+    <main id="main-content" th:replace="${content}" role="main">
+        <!-- Il contenuto della pagina verrà inserito qui -->
+    </main>
+    
+    <!-- Footer -->
+    <footer th:replace="fragments/footer.html :: footer"></footer>
+    
+</body>
+</html>

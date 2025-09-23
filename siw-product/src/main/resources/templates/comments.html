@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Commenti - [[${product.name}]]</title>
+</head>
+<body>
+    <main>
+        <div class="comments-page">
+            <!-- Header con breadcrumb -->
+            <nav class="breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span>/</span>
+                <a th:href="@{/products}">Prodotti</a>
+                <span>/</span>
+                <a th:href="@{/product/{id}(id=${product.id})}" th:text="${product.name}">Prodotto</a>
+                <span>/</span>
+                <span>Commenti</span>
+            </nav>
+
+            <div class="comments-container">
+                <div class="comments-header-page">
+                    <h1>Commenti di <span th:text="${product.name}">Prodotto</span></h1>
+                    <p class="comments-count" th:text="${product.comments.size()} + ' recensioni totali'">0 commenti totali</p>
+                </div>
+
+                <!-- Form inserimento commento (solo se l'utente non ha già commentato) -->
+                <div th:if="${isAuthenticated and userComment == null and isUser}" class="add-comment-section">
+                    <h2>Lascia un commento</h2>
+                    <form th:action="@{/product/{id}/comment/add(id=${product.id})}" 
+                          th:object="${comment}" 
+                          method="post" 
+                          class="comment-form">
+                        
+                        <div class="form-group">
+                            <label for="text">Il tuo commento *</label>
+                            <textarea id="text" 
+                                      th:field="*{text}" 
+                                      class="comment-textarea" 
+                                      rows="4" 
+                                      placeholder="Scrivi qui la tua esperienza con questo prodotto..."
+                                      required></textarea>
+                            <span th:if="${#fields.hasErrors('text')}" 
+                                  th:errors="*{text}" 
+                                  class="error-message"></span>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit-comment">Pubblica Commento</button>
+                    </form>
+                </div>
+
+                <!-- Messaggio per utenti non autenticati -->
+                <div th:if="${!isAuthenticated}" class="login-prompt">
+                    <p>Effettua il <a th:href="@{/login}">login</a> per lasciare un commento</p>
+                </div>
+
+                <!-- Commento dell'utente (se esiste) -->
+                <div th:if="${userComment != null and isUser}" class="user-comment-section">
+                    <h2>Il tuo Commento</h2>
+                    <div class="comment-card user-comment">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <span class="author-name" th:text="${userComment.user.name}">Nome Utente</span>
+                                <span class="comment-badge">Il tuo commento</span>
+                            </div>
+                            <div class="comment-actions">
+                                <a th:href="@{/product/{pid}/comment/{cid}/edit(pid=${product.id}, cid=${userComment.id})}" 
+                                   class="btn-edit-comment"><img th:src="@{/images/pencil2.png}" 
+                             style="width: 20px !important; height: 20px !important;"></a>
+                                <form th:action="@{/product/{pid}/comment/{cid}/delete(pid=${product.id}, cid=${userComment.id})}" 
+                                      method="post" 
+                                      style="display: inline;">
+                                    <button type="submit" 
+                                            class="btn-delete-comment"
+                                            >
+                                        <img th:src="@{/images/wastebasket.png}" style="width: 20px !important; height: 20px !important;">
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="comment-body">
+                            <p th:text="${userComment.text}">Testo del commento...</p>
+                        </div>
+                        <div class="comment-footer">
+                            <span class="comment-date" th:text="${#temporals.format(userComment.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista altri commenti -->
+                <div class="other-comments-section">
+                    <h2 th:if="${userComment != null}">Altre commenti</h2>
+                    <h2 th:if="${userComment == null and !comments.isEmpty()}">Tutti i commenti</h2>
+                    
+                    <div th:if="${comments.isEmpty()}" class="no-comments">
+                        <p>Nessun'altro commento al momento.</p>
+                    </div>
+
+                    <div class="comments-list">
+                        <div th:each="comment : ${comments}" class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-author">
+                                    <span class="author-name" th:text="${comment.user.name} + ' ' + ${comment.user.surname}">Nome Utente</span>
+                                </div>
+                                <div th:if="${isAdmin}" class="comment-actions">
+                                    <form th:action="@{/admin/product/{pid}/comment/{cid}/delete(pid=${product.id}, cid=${comment.id})}" 
+                                          method="post" 
+                                          style="display: inline;">
+                                        <button type="submit" 
+                                                class="btn-delete-comment admin-delete"
+                                               >
+                                            <img th:src="@{/images/wastebasket.png}" 
+                             style="width: 20px !important; height: 20px !important;">
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="comment-body">
+                                <p th:text="${comment.text}">Testo del commento...</p>
+                            </div>
+                            <div class="comment-footer">
+                                <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="back-to-product">
+                    <a th:href="@{/product/{id}(id=${product.id})}" class="btn-back">← Torna al prodotto</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

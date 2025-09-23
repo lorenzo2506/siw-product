@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Accedi - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1 class="auth-title">Accedi</h1>
+                
+                <!-- Messaggio di errore -->
+                <div th:if="${errorMessage}" class="alert alert-error">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+                
+                <!-- Messaggio di logout -->
+                <div th:if="${logoutMessage}" class="alert alert-success">
+                    <p th:text="${logoutMessage}"></p>
+                </div>
+                
+                <!-- Form di login -->
+                <form th:action="@{/login}" method="post" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">Username/Email</label>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="form-input" 
+                               required 
+                               autofocus>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="form-input" 
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Accedi</button>
+                </form>
+                
+                <!-- OAuth Login -->
+                <div class="divider">
+                    <span>oppure</span>
+                </div>
+                
+                <a th:href="@{/oauth2/authorization/google}" class="btn-google">
+                    <span class="google-icon">G</span>
+                    Continua con Google
+                </a>
+                
+                <!-- Link registrazione -->
+                <p class="auth-footer">
+                    Non hai un account? 
+                    <a th:href="@{/register}" class="auth-link">Registrati</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

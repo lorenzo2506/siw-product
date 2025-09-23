@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Home - SIW Product</title>
+</head>
+<body>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Scopri i Nostri Prodotti</h1>
+            <p>Qualità e convenienza in un unico posto</p>
+            <a th:href="@{/products}" class="btn">Esplora Catalogo</a>
+        </section>
+    </main>
+</body>
+</html>

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,9 +44,8 @@ public class ProductService {
     @Transactional
     public Product save(Product product) {
         // Normalizza la categoria in minuscolo
-        if (product.getCategory() != null) {
-            product.setCategory(product.getCategory().toLowerCase().trim());
-        }
+    	product.setName( product.getName().toLowerCase().trim() );
+        product.setCategory( product.getCategory().toLowerCase().trim() );
         return productRepository.save(product);
     }
     
@@ -54,13 +54,24 @@ public class ProductService {
         productRepository.deleteById(id);
     }
     
+    public void delete(Long id) {
+    	
+    	Product product = this.findById(id);
+    	List<Product> similar = this.findAllSimilarProducts(id);
+    	for(Product p: similar) {
+    		p.getSimilarProducts().remove(product);
+    		this.save(p);
+    	}
+    	
+    	this.deleteById(id);
+    }
+    
     @Transactional
     public void addSimilarProduct(Long productId, Long similarProductId) {
         Product product = productRepository.findById(productId).orElse(null);
         Product similarProduct = productRepository.findById(similarProductId).orElse(null);
         
         if (product != null && similarProduct != null) {
-            product.getSimilarProducts().add(similarProduct);
             similarProduct.getSimilarProducts().add(product);
             productRepository.save(product);
             productRepository.save(similarProduct);
@@ -109,6 +120,7 @@ public class ProductService {
     	product.setPrice( formProduct.getPrice() );
     	product.setDescription( formProduct.getDescription());
     	product.setCategory( formProduct.getCategory() );
+    	product.setImagePath( formProduct.getImagePath() );
     	this.save(product);
     	
     }
@@ -131,5 +143,43 @@ public class ProductService {
     	
     	product.getComments().remove(comment);
     	this.save(product);
+    }
+    
+    @Transactional
+    public void updateSimilarProducts(Long productId, List<Long> newSimilarIds) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) return;
+        
+        // Rimuovi tutti i vecchi collegamenti
+        List<Product> oldSimilars = new ArrayList<>(product.getSimilarProducts());
+        for (Product old : oldSimilars) {
+            old.getSimilarProducts().remove(product);
+            product.getSimilarProducts().remove(old);
+        }
+        
+        // Aggiungi i nuovi
+        if (newSimilarIds != null) {
+            for (Long similarId : newSimilarIds) {
+                Product similar = productRepository.findById(similarId).orElse(null);
+                if (similar != null) {
+                    product.getSimilarProducts().add(similar);
+                    similar.getSimilarProducts().add(product);
+                }
+            }
+        }
+        
+        productRepository.save(product);
+    }
+    
+    
+    
+    
+    public List<Product> searchProducts(String query, Double minPrice, Double maxPrice) {
+        List<Product> products;
+        
+        if(query==null || query.isEmpty())
+        	return this.findAll();
+        
+        return this.productRepository.findBySearchQuery(query, maxPrice, minPrice);
     }
 }

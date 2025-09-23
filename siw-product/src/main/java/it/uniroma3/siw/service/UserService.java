@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import it.uniroma3.siw.model.Comment;
 import it.uniroma3.siw.model.User;
 import it.uniroma3.siw.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -29,18 +29,23 @@ public class UserService {
 	
 	@Transactional
 	public void addCommentToUser(Comment comment, User user) {
-		
-		
-		user.getComments().add(comment);
-		this.saveUser(user);
+	    // Ricarica l'utente dal database per avere la sessione attiva
+	    User managedUser = userRepo.findById(user.getId())
+	        .orElseThrow(() -> new RuntimeException("User not found"));
+	    
+	    managedUser.getComments().add(comment);
+	    this.saveUser(managedUser);
 	}
 	
 	
 	@Transactional
 	public void removeCommentToUser(Comment comment, User user) {
-		
-		user.getComments().remove(comment);
-		this.saveUser(user);
+	    // Ricarica l'utente dal database
+	    User managedUser = userRepo.findById(user.getId())
+	        .orElseThrow(() -> new RuntimeException("User not found"));
+	    
+	    managedUser.getComments().remove(comment);
+	    this.saveUser(managedUser);
 	}
 	
 	

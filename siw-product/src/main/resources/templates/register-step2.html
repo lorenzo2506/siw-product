@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Completa Registrazione - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1 class="auth-title" th:text="${pageTitle} ?: 'Scegli Username'">Scegli Username</h1>
+                <p class="auth-subtitle" th:if="${!isOAuth2}">Step 2 di 2: Scegli il tuo username</p>
+                <p class="auth-subtitle" th:if="${isOAuth2}" th:text="${welcomeMessage}">Benvenuto!</p>
+                
+                <!-- Progress bar (solo per registrazione normale) -->
+                <div th:if="${!isOAuth2}" class="progress-bar">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                </div>
+                
+                <!-- Messaggio OAuth -->
+                <div th:if="${isOAuth2}" class="alert alert-info">
+                    <p th:text="${instructions}">Per completare la registrazione con Google, scegli un username:</p>
+                </div>
+                
+                <!-- Messaggio di errore -->
+                <div th:if="${usernameExists}" class="alert alert-error">
+                    <p th:text="${usernameExists}"></p>
+                </div>
+                
+                <div th:if="${errorMessage}" class="alert alert-error">
+                    <p th:text="${errorMessage}"></p>
+                </div>
+                
+                <!-- Form Step 2 -->
+                <form th:action="@{/register/step2}" 
+                      th:object="${credentials}" 
+                      method="post" 
+                      class="auth-form">
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" 
+                               id="username" 
+                               th:field="*{username}" 
+                               class="form-input" 
+                               required 
+                               autofocus
+                               minlength="3">
+                        <small class="form-hint">Minimo 3 caratteri</small>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">
+                            <span th:if="${!isOAuth2}">Completa Registrazione</span>
+                            <span th:if="${isOAuth2}">Conferma</span>
+                        </button>
+                        <a th:href="@{/register/cancel}" class="btn-secondary">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

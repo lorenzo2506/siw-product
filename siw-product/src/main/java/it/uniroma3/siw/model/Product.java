@@ -45,6 +45,7 @@ public class Product {
     private List<Comment> comments = new ArrayList<>();
     
     
+    private String imagePath;
     
     @Override
     public boolean equals(Object o) {

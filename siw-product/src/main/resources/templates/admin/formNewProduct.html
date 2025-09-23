@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Nuovo Prodotto - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="admin-form-container">
+            <div class="form-header">
+                <h1 class="form-title">Aggiungi Nuovo Prodotto</h1>
+                <a th:href="@{/products}" class="btn-back-link">← Torna ai prodotti</a>
+            </div>
+            
+            <div class="admin-form-card">
+                <form th:action="@{/admin/product/new}" 
+                      th:object="${product}" 
+                      method="post" 
+                      enctype="multipart/form-data"
+                      class="product-form">
+                    
+                    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+                    
+                    <div class="form-group">
+                        <label for="name">Nome Prodotto *</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-input" required>
+                        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price">Prezzo (€) *</label>
+                        <input type="number" id="price" th:field="*{price}" class="form-input" step="0.01" min="0" required>
+                        <span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Categoria *</label>
+                        <input type="text" id="category" th:field="*{category}" class="form-input" placeholder="es: libri, giardinaggio, elettronica" required>
+                        <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Descrizione *</label>
+                        <textarea id="description" th:field="*{description}" class="form-textarea" rows="5" required></textarea>
+                        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-message"></span>
+                    </div>
+                    
+                   <!-- Prodotti Simili -->
+<fieldset class="form-section">
+    <legend>Prodotti Simili (opzionale)</legend>
+    
+    <div class="similar-products-container">
+        <!-- Prodotti già aggiunti -->
+        <div th:each="similar, stat : ${product.similarProducts}" class="similar-card">
+            <div class="similar-card-header">
+                <h4>Prodotto Simile <span th:text="${stat.index + 1}">1</span></h4>
+                <button type="submit" class="btn-remove" name="rimuoviSimilarProduct" th:value="${stat.index}">🗑️</button>
+            </div>
+            <div class="similar-fields">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" th:value="${similar.name}" class="form-input" disabled />
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <input type="text" th:value="${similar.category}" class="form-input" disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Campo per aggiungere nuovo - APPARE SOLO SE mostraCampoNuovo è true -->
+    <div th:if="${mostraCampoNuovo}" class="similar-card" style="margin-top: 1rem;">
+        <div class="similar-card-header">
+            <h4>Aggiungi Prodotto Simile</h4>
+            <!-- CESTINO PER CHIUDERE IL CAMPO -->
+            <button type="submit" class="btn-remove" name="chiudiCampoNuovo">🗑️</button>
+        </div>
+        <div class="similar-fields">
+            <div class="form-group">
+                <label>Nome Prodotto *</label>
+                <input type="text" name="newSimilarName" placeholder="Nome esatto del prodotto" class="form-input" />
+            </div>
+            <div class="form-group">
+                <label>Categoria *</label>
+                <input type="text" name="newSimilarCategory" placeholder="Categoria esatta" class="form-input" />
+            </div>
+        </div>
+        <button type="submit" name="aggiungiSimilarProduct" class="btn-add">✓ Conferma</button>
+    </div>
+    
+    <!-- Pulsante per mostrare il campo - APPARE SOLO SE il campo NON è mostrato -->
+    <button th:if="${!mostraCampoNuovo}" type="submit" name="aggiungiSimilarProduct" class="btn-add">➕ Aggiungi Prodotto Simile</button>
+    <small class="form-hint">Il prodotto deve esistere nel database</small>
+</fieldset>
+                    
+                    <div class="form-group">
+                        <label for="imageFile">Immagine Prodotto</label>
+                        <input type="file" id="imageFile" name="imageFile" class="form-file" accept="image/*">
+                        <small class="form-hint">Formati supportati: JPEG, PNG, GIF, WebP (max 5MB)</small>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Crea Prodotto</button>
+                        <a th:href="@{/products}" class="btn-cancel">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

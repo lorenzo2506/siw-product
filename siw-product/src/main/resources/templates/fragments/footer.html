@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Footer Fragment -->
+    <footer th:fragment="footer" class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Azienda</h3>
+                <a th:href="@{/}">Chi Siamo</a>
+                <a th:href="@{/}">Contatti</a>
+            </div>
+            <div class="footer-section">
+                <h3>Supporto</h3>
+                <a th:href="@{/}">FAQ</a>
+                <a th:href="@{/}">Spedizioni</a>
+            </div>
+            <div class="footer-section">
+                <h3>Legale</h3>
+                <a th:href="@{/}">Privacy</a>
+                <a th:href="@{/}">Termini</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

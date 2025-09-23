@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Navbar Fragment -->
+    <nav th:fragment="navbar" class="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a th:href="@{/}" class="logo">SIW Product</a>
+            
+            <!-- Barra di ricerca -->
+            <div class="search-container">
+                <form th:action="@{/products/search}" method="get" class="search-form">
+                    <input type="text" 
+                           name="query" 
+                           class="search-input" 
+                           placeholder="Cerca prodotti..."
+                           th:value="${searchQuery}">
+                    <button type="submit" class="search-btn">Cerca</button>
+                    
+                    <!-- Toggle filtri con checkbox CSS -->
+                    <input type="checkbox" id="filter-toggle" class="filter-checkbox" 
+                           th:checked="${showFilters}">
+                    <label for="filter-toggle" class="filter-label"><img th:src="@{/images/mag-icon.png}" 
+                             style="width: 20px !important; height: 20px !important;"> Filtri</label>
+                    
+                    <!-- Pannello filtri -->
+                    <div class="filters-panel">
+                        
+                        <div class="filter-group">
+                            <label for="minPrice">Prezzo minimo (€)</label>
+                            <input type="number" 
+                                   id="minPrice" 
+                                   name="minPrice" 
+                                   step="0.01" 
+                                   min="0"
+                                   th:value="${minPrice}">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="maxPrice">Prezzo massimo (€)</label>
+                            <input type="number" 
+                                   id="maxPrice" 
+                                   name="maxPrice" 
+                                   step="0.01" 
+                                   min="0"
+                                   th:value="${maxPrice}">
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <a th:href="@{/products}" class="reset-filters">Reset</a>
+                            <button type="submit" class="apply-filters">Applica</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Navigation Links -->
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/products}">Prodotti</a></li>
+                <li><a th:href="@{/profile}">Profilo</a></li>
+            </ul>
+        </div>
+    </nav>
+</body>
+</html>

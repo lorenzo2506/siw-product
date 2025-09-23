@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Modifica Commento</title>
+</head>
+<body>
+    <main>
+        <div class="edit-comment-page">
+            <div class="edit-comment-container">
+                <div class="edit-header">
+                    <h1>Modifica il tuo commento</h1>
+                    <p>Prodotto: <strong th:text="${comment.product.name}">Nome Prodotto</strong></p>
+                </div>
+
+                <form th:action="@{/product/{pid}/comment/{cid}/edit(pid=${comment.product.id}, cid=${comment.id})}" 
+                      th:object="${comment}" 
+                      method="post" 
+                      class="edit-comment-form">
+                    
+                    <div class="form-group">
+                        <label for="text">Testo del commento *</label>
+                        <textarea id="text" 
+                                  th:field="*{text}" 
+                                  class="comment-textarea" 
+                                  rows="6" 
+                                  required></textarea>
+                        <span th:if="${#fields.hasErrors('text')}" 
+                              th:errors="*{text}" 
+                              class="error-message"></span>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Salva Modifiche</button>
+                        <a th:href="@{/product/{id}/comments(id=${comment.product.id})}" class="btn-cancel">Annulla</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

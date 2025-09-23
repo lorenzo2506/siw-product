@@ -3,6 +3,7 @@ package it.uniroma3.siw.controller;
 import it.uniroma3.siw.model.Comment;
 import it.uniroma3.siw.model.Credentials;
 import it.uniroma3.siw.model.Product;
+import it.uniroma3.siw.model.User;
 import it.uniroma3.siw.service.AuthenticationService;
 import it.uniroma3.siw.service.CommentService;
 import it.uniroma3.siw.service.ProductService;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -41,8 +43,7 @@ public class CommentController {
             return "product";
         }
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Credentials credentials = (Credentials) auth.getPrincipal();
+        Credentials credentials = this.authenticationService.getCurrentUserCredentials();
         
         comment.setProduct(product);
         comment.setUser(credentials.getUser());
@@ -52,7 +53,7 @@ public class CommentController {
         this.productService.addCommentToProduct(comment, product);
         
         
-        return "redirect:/product/" + productId;
+        return "redirect:/product/" + productId + "/comments";
     }
     
     
@@ -62,8 +63,7 @@ public class CommentController {
     	
     	Comment comment = commentService.findById(commentId);
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Credentials credentials = (Credentials) auth.getPrincipal();
+        Credentials credentials = this.authenticationService.getCurrentUserCredentials();
         
         if (!comment.getUser().getId().equals(credentials.getUser().getId())) {
             return "redirect:/product/" + comment.getProduct().getId();
@@ -84,8 +84,7 @@ public class CommentController {
         Comment existingComment = commentService.findById(commentId);
         Long productId = existingComment.getProduct().getId();
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Credentials credentials = (Credentials) auth.getPrincipal();
+        Credentials credentials = this.authenticationService.getCurrentUserCredentials();
         
         // Verifica che l'utente sia il proprietario del commento
         if (!existingComment.getUser().getId().equals(credentials.getUser().getId())) {
@@ -98,7 +97,7 @@ public class CommentController {
         }
         
         commentService.update(commentId, formComment.getText());
-        return "redirect:/product/" + productId;
+        return "redirect:/product/" + productId + "/comments";
     }
     
     // Elimina commento
@@ -109,9 +108,8 @@ public class CommentController {
         Long productId = comment.getProduct().getId();
         Product product = this.productService.findById(productId);
         
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Credentials credentials = (Credentials) auth.getPrincipal();
-        
+        Credentials credentials = this.authenticationService.getCurrentUserCredentials();
+
         // Verifica che l'utente sia il proprietario del commento
         if (comment.getUser().getId().equals(credentials.getUser().getId())) {
         	
@@ -120,7 +118,7 @@ public class CommentController {
             commentService.deleteById(commentId);
         }
         
-        return "redirect:/product/" + productId;
+        return "redirect:/product/" + productId + "/comments";
     }
     
     
@@ -131,7 +129,7 @@ public class CommentController {
         Long productId = comment.getProduct().getId();
         
         
-        if(authenticationService.isAdmin())
+        if(!authenticationService.isAdmin())
         	return "redirect:/product/" + productId;
         
         this.productService.deleteCommentToProduct(comment, comment.getProduct());
@@ -139,7 +137,7 @@ public class CommentController {
         commentService.deleteById(commentId);
 
         
-        return "redirect:/product/" + productId;
+        return "redirect:/product/" + productId + "/commments";
     }
     
     
@@ -147,8 +145,25 @@ public class CommentController {
     public String showAllComments(@PathVariable("productId") Long productId,Model model) {
     	
     	Product product = this.productService.findById(productId);
+    	Comment userComment=null;
+    	Credentials credentials = this.authenticationService.getCurrentUserCredentials();
+    	List<Comment> comments;
+    	
+    	if(credentials!=null ) {
+    		comments=this.commentService.findAllByProductAnsUserNot(product, credentials.getUser());
+    		userComment= this.commentService.findByProductAndUser(product, credentials.getUser());
+    	}
+    	else
+    		comments = this.commentService.findByProductId(productId);
+    	
     	model.addAttribute("product", product);
+    	model.addAttribute("comments", comments);
     	model.addAttribute("comment", new Comment());
+    	
+    	if(credentials!=null && userComment!=null)
+    		model.addAttribute("userComment", userComment);
+    	
+   
     	return "comments";
     }
     

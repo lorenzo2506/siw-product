@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Registrati - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="auth-container">
+            <div class="auth-card">
+                <h1 class="auth-title">Crea Account</h1>
+                <p class="auth-subtitle">Step 1 di 2: Inserisci i tuoi dati</p>
+                
+                <!-- Progress bar -->
+                <div class="progress-bar">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                </div>
+                
+                <!-- Messaggio di errore -->
+                <div th:if="${emailExists}" class="alert alert-error">
+                    <p th:text="${emailExists}"></p>
+                </div>
+                
+                <!-- Form Step 1 -->
+                <form th:action="@{/register/step1}" 
+                      th:object="${credentials}" 
+                      method="post" 
+                      class="auth-form">
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" 
+                               id="email" 
+                               th:field="*{email}" 
+                               class="form-input" 
+                               required 
+                               autofocus>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" 
+                               id="password" 
+                               th:field="*{password}" 
+                               class="form-input" 
+                               required 
+                               minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" 
+                               id="name" 
+                               th:field="*{user.name}" 
+                               class="form-input" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="surname">Cognome</label>
+                        <input type="text" 
+                               id="surname" 
+                               th:field="*{user.surname}" 
+                               class="form-input" 
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Continua</button>
+                </form>
+                
+                <!-- Link login -->
+                <p class="auth-footer">
+                    Hai già un account? 
+                    <a th:href="@{/login}" class="auth-link">Accedi</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

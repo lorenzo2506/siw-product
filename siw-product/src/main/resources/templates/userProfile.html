@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org" 
+      th:replace="~{fragments/layout :: base(~{::title}, ~{::main})}">
+<head>
+    <title>Profilo - SIW Product</title>
+</head>
+<body>
+    <main>
+        <div class="profile-container">
+            <!-- Header Profilo con gradiente -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <span th:text="${currentUser.name.substring(0,1).toUpperCase() + currentUser.surname.substring(0,1).toUpperCase()}">LA</span>
+                </div>
+                <h1 class="profile-name" th:text="${currentUser.name + ' ' + currentUser.surname}">Nome Cognome</h1>
+                <div class="profile-role">
+                    <span th:if="${isAdmin}" class="role-badge admin">AMMINISTRATORE</span>
+                    <span th:if="${isUser}" class="role-badge user">UTENTE</span>
+                </div>
+            </div>
+            
+            <div class="profile-card">
+                <!-- Info Utente -->
+                <div class="profile-section">
+                    <h2 class="section-title">Informazioni Account</h2>
+                    <div class="profile-info">
+                        <div class="info-row">
+                            <span class="info-label">Nome:</span>
+                            <span class="info-value" th:text="${currentUser.name}">Nome</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Cognome:</span>
+                            <span class="info-value" th:text="${currentUser.surname}">Cognome</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Username:</span>
+                            <span class="info-value" th:text="${userDetails.username}">Username</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value" th:text="${userDetails.email}">email@example.com</span>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <!-- Logout -->
+                <div class="logout-section">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn-logout">Disconnetti</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

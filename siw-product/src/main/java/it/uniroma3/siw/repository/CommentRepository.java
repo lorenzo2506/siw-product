@@ -18,5 +18,5 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
     
     public Comment findByProductAndUser(Product product, User user);
     
-    
+    public List<Comment> findAllByProductAndUserNot(Product product, User user);
 }

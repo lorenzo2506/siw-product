@@ -28,30 +28,22 @@ public class AuthenticationService {
     public UserDetails getCurrentUserDetails() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         
-        System.out.println("=== GET CURRENT USER DETAILS ===");
-        System.out.println("Authentication: " + auth);
-        System.out.println("Is authenticated: " + (auth != null ? auth.isAuthenticated() : "null"));
-        System.out.println("Principal type: " + (auth != null && auth.getPrincipal() != null ? auth.getPrincipal().getClass() : "null"));
         
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             Object principal = auth.getPrincipal();
             
             if (principal instanceof Credentials credentials) {
                 // Login tradizionale - funziona direttamente
-                System.out.println("Traditional login - returning Credentials directly");
                 return credentials;
             } else if (principal instanceof CustomOAuth2User customUser) {
                 // Login OAuth2 con il nostro wrapper
-                System.out.println("OAuth2 login with CustomOAuth2User wrapper");
                 return customUser.getCredentials();
             } else if (principal instanceof OAuth2User oAuth2User) {
                 // Login OAuth2 senza wrapper - dovremmo cercare nel database
-                System.out.println("OAuth2 login without wrapper - looking up in database");
                 String email = (String) oAuth2User.getAttributes().get("email");
                 if (email != null) {
                     Credentials credentials = credentialsService.getByEmail(email);
                     if (credentials != null) {
-                        System.out.println("Found credentials for OAuth2 user: " + email);
                         return credentials;
                     } else {
                         System.out.println("No credentials found for OAuth2 user: " + email);
@@ -62,7 +54,6 @@ public class AuthenticationService {
             }
         }
         
-        System.out.println("Returning null - no valid authentication found");
         return null;
     }
     
@@ -109,10 +100,6 @@ public class AuthenticationService {
      * Effettua il login automatico per un utente appena registrato
      */
     public void loginUserAutomatically(Credentials credentials, HttpServletRequest request) {
-        System.out.println("=== AUTOMATIC LOGIN ===");
-        System.out.println("Logging in user: " + credentials.getUsername());
-        System.out.println("Email: " + credentials.getEmail());
-        System.out.println("Role: " + credentials.getRole());
         
         try {
             // Crea il token di autenticazione
@@ -135,9 +122,7 @@ public class AuthenticationService {
                 SecurityContextHolder.getContext()
             );
             
-            System.out.println("User successfully logged in automatically!");
-            System.out.println("Authentication: " + SecurityContextHolder.getContext().getAuthentication());
-            
+             
         } catch (Exception e) {
             System.err.println("Error during automatic login: " + e.getMessage());
             e.printStackTrace();
